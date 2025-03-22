@@ -8,12 +8,27 @@
 </head>
 <body>
     <h1>Health Insurance Risk Calculator</h1>
+
+    <div id="instructions">
+        <p>Welcome to the Health Insurance Risk Calculator!</p>
+        <p>Follow these steps to calculate your health risk:</p>
+        <ol>
+            <li>Enter your age (years).</li>
+            <li>Enter your height in centimeters (minimum of 60 cm).</li>
+            <li>Enter your weight in kilograms.</li>
+            <li>Enter your blood pressure (systolic and diastolic).</li>
+            <li>Select any family history of diseases such as Diabetes, Cancer, or Alzheimer’s.</li>
+            <li>Click on "Calculate Risk" to get your result!</li>
+        </ol>
+        <p><strong>Note:</strong> Make sure all fields are filled correctly before submitting the form.</p>
+    </div>
+
     <form id="riskForm">
-        <label>Age: <input type="number" id="age" required></label>
-        <label>Height (cm): <input type="number" id="height" required></label>
-        <label>Weight (kg): <input type="number" id="weight" required></label>
-        <label>Blood Pressure (Systolic): <input type="number" id="systolic" required></label>
-        <label>Blood Pressure (Diastolic): <input type="number" id="diastolic" required></label>
+        <label>Age: <input type="number" id="age" required min="1" title="Please enter a valid age."></label>
+        <label>Height (cm): <input type="number" id="height" required min="60" title="Height must be at least 60 cm."></label>
+        <label>Weight (kg): <input type="number" id="weight" required min="1" title="Please enter a valid weight."></label>
+        <label>Blood Pressure (Systolic): <input type="number" id="systolic" required min="1" title="Please enter a valid systolic value."></label>
+        <label>Blood Pressure (Diastolic): <input type="number" id="diastolic" required min="1" title="Please enter a valid diastolic value."></label>
         <label>Family History:
             <select id="familyHistory" multiple>
                 <option value="diabetes">Diabetes</option>
@@ -23,7 +38,9 @@
         </label>
         <button type="button" onclick="calculateRisk()">Calculate Risk</button>
     </form>
+
     <p id="result"></p>
+
     <script src="js/script.js"></script>
 </body>
 </html>
