@@ -1,61 +1,75 @@
-async function calculateRisk() {
-    console.log("Button Clicked!"); // Debugging check
+function calculateRisk() {
+    console.log("Button Clicked!");
 
-    const age = document.getElementById('age').value;
-    const height = document.getElementById('height').value;
-    const weight = document.getElementById('weight').value;
-    const systolic = document.getElementById('systolic').value;
-    const diastolic = document.getElementById('diastolic').value;
-    const familyHistory = Array.from(document.getElementById('familyHistory').selectedOptions).map(option => option.value);
+    // Gather input data
+    const age = document.getElementById("age").value;
+    const height = document.getElementById("height").value;
+    const weight = document.getElementById("weight").value;
+    const systolic = document.getElementById("systolic").value;
+    const diastolic = document.getElementById("diastolic").value;
+    const familyHistory = Array.from(document.getElementById("familyHistory").selectedOptions).map(option => option.value);
 
-    // Check if input values exist
+    // Input Validation
     if (!age || !height || !weight || !systolic || !diastolic) {
-        alert("Please fill all fields.");
+        alert("All fields are required.");
         return;
     }
 
-    // Validate minimum height
     if (parseInt(height) < 60) {
         alert("Height must be at least 60 cm.");
         return;
     }
 
-    // Calculate BMI
-    const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
-    console.log(`BMI: ${bmi}`); // Debugging check
+    // Calculate BMI as part of the risk score calculation
+    const bmi = calculateBMI(weight, height);
+    console.log("BMI:", bmi);
 
+    // Prepare request body
     const requestBody = {
-        age: parseInt(age),
-        bmi: parseFloat(bmi),
-        systolic: parseInt(systolic),
-        diastolic: parseInt(diastolic),
-        familyHistory
+        age: age,
+        height: height,
+        weight: weight,
+        systolic: systolic,
+        diastolic: diastolic,
+        familyHistory: familyHistory,
+        bmi: bmi
     };
 
-    console.log("Sending Request:", requestBody); // Debugging check
+    // Log to confirm values
+    console.log("Sending Request:", requestBody);
 
-    try {
-        const response = await fetch('https://health-risk-calculator-api.azurewebsites.net/api/calculateRisk', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-functions-key': 'f_5cKzdysLr8BWE0EcnJhd0F-ji9ouhdMLBwh9GXB_L2AzFuXk7Wzw=='  // Add your function key here
-            },
-            body: JSON.stringify(requestBody)
-        });
+    // Make an API request
+    fetch('https://health-risk-calculator-api.azurewebsites.net/api/calculateRisk', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+        credentials: 'include'  // Include credentials like cookies with the request
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Received Data:", data);
+        displayResult(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while calculating risk. Please try again later.');
+    });
+}
 
-        console.log("Response Status:", response.status); // Debugging check
+// Calculate BMI (Body Mass Index)
+function calculateBMI(weight, height) {
+    const heightInMeters = height / 100; // Convert cm to meters
+    return (weight / (heightInMeters * heightInMeters)).toFixed(2);
+}
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Response Data:", data); // Debugging check
-
-        document.getElementById('result').innerText = `Risk Score: ${data.riskScore}, Category: ${data.riskCategory}`;
-    } catch (error) {
-        console.error("Error:", error);
-        alert("There was an error processing your request. Check console for details.");
+// Display result
+function displayResult(data) {
+    const resultElement = document.getElementById("result");
+    if (data && data.riskScore) {
+        resultElement.textContent = `Your health risk score is: ${data.riskScore}`;
+    } else {
+        resultElement.textContent = "Error calculating risk. Please ensure all fields are filled correctly.";
     }
 }
