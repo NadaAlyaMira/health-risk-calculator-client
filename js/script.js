@@ -29,7 +29,7 @@ async function calculateRisk() {
     console.log("Sending Request:", requestBody); // Debugging check
 
     try {
-        const response = await fetch('http://localhost:3000/api/calculateRisk', {
+        const response = await fetch('https://health-risk-calculator-api.azurewebsites.net/api/calculateRisk', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody)
