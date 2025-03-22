@@ -1,7 +1,6 @@
 async function calculateRisk() {
     console.log("Button Clicked!"); // Debugging check
 
-    // Collect input values
     const age = document.getElementById('age').value;
     const height = document.getElementById('height').value;
     const weight = document.getElementById('weight').value;
@@ -9,13 +8,14 @@ async function calculateRisk() {
     const diastolic = document.getElementById('diastolic').value;
     const familyHistory = Array.from(document.getElementById('familyHistory').selectedOptions).map(option => option.value);
 
-    // Validate inputs
+    // Check if input values exist
     if (!age || !height || !weight || !systolic || !diastolic) {
         alert("Please fill all fields.");
         return;
     }
 
-    if (height < 60) {
+    // Validate minimum height
+    if (parseInt(height) < 60) {
         alert("Height must be at least 60 cm.");
         return;
     }
@@ -37,9 +37,9 @@ async function calculateRisk() {
     try {
         const response = await fetch('https://health-risk-calculator-api.azurewebsites.net/api/calculateRisk', {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
-                'x-functions-key': 'f_5cKzdysLr8BWE0EcnJhd0F-ji9ouhdMLBwh9GXB_L2AzFuXk7Wzw==' // Add your Azure App Key here
+                'x-functions-key': 'f_5cKzdysLr8BWE0EcnJhd0F-ji9ouhdMLBwh9GXB_L2AzFuXk7Wzw=='  // Add your function key here
             },
             body: JSON.stringify(requestBody)
         });
@@ -53,7 +53,6 @@ async function calculateRisk() {
         const data = await response.json();
         console.log("Response Data:", data); // Debugging check
 
-        // Display result
         document.getElementById('result').innerText = `Risk Score: ${data.riskScore}, Category: ${data.riskCategory}`;
     } catch (error) {
         console.error("Error:", error);
